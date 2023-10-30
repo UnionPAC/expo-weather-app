@@ -1,22 +1,32 @@
-import React from 'react'
-import { NavigationContainer } from '@react-navigation/native'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import CurrentWeather from './src/screens/CurrentWeather'
-import UpcomingWeather from './src/screens/UpcomingWeather'
-import City from './src/screens/City'
-
-const Tab = createBottomTabNavigator()
+import React from "react";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import Tabs from "./src/components/Tabs";
+import { useGetWeather } from "./src/hooks/useGetWeather";
+import ErrorItem from "./src/components/ErrorItem";
 
 const App = () => {
+  const [loading, error, weather] = useGetWeather();
+  const { container } = styles;
+
   return (
     <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Current" component={CurrentWeather} />
-        <Tab.Screen name="Upcoming" component={UpcomingWeather} />
-        <Tab.Screen name="City" component={City} />
-      </Tab.Navigator>
+      {loading && (
+        <View style={container}>
+          <ActivityIndicator size={"large"} />
+        </View>
+      )}
+      {weather && weather.list && <Tabs weather={weather} />}
+      {error && <ErrorItem />}
     </NavigationContainer>
-  )
-}
+  );
+};
 
-export default App
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+});
+
+export default App;

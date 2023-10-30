@@ -1,13 +1,14 @@
 import React from "react";
 import { SafeAreaView, View, StyleSheet, Text } from "react-native";
 import RowText from "../components/RowText";
+import { weatherType } from "../utils/weatherType";
 import { Feather } from "@expo/vector-icons";
 
-const CurrentWeather = () => {
+const CurrentWeather = ({ weatherData }) => {
   const {
     wrapper,
     container,
-    temp,
+    tempStyles,
     feelsLikeTemp,
     highLowWrapper,
     highLow,
@@ -15,24 +16,33 @@ const CurrentWeather = () => {
     description,
     message,
   } = styles;
+
+  const {
+    main: { temp, feels_like, temp_min, temp_max },
+    weather,
+  } = weatherData;
+
+  const weatherCondition = weather[0]?.main;
   return (
     <SafeAreaView style={wrapper}>
       <View style={container}>
-        <Feather name="sun" size={100} />
-        <Text style={temp}>6</Text>
-        <Text style={feelsLikeTemp}>Feels like 5</Text>
+        <Feather name={weatherType[weatherCondition].icon} size={100} />
+        <Text style={tempStyles}>{temp.toFixed()}°</Text>
+        <Text
+          style={feelsLikeTemp}
+        >{`Feels like ${feels_like.toFixed()}°`}</Text>
         <RowText
-          textOne={"High: 8"}
+          textOne={`High: ${temp_max.toFixed()}°`}
           textOneStyles={highLow}
-          textTwo={"Low: 6"}
+          textTwo={`Low: ${temp_min.toFixed()}°`}
           textTwoStyles={highLow}
           containerStyles={highLowWrapper}
         />
       </View>
       <RowText
-        textOne={"It's sunny"}
+        textOne={weather[0]?.description}
         textOneStyles={description}
-        textTwo={"Perfect t-shirt weather!"}
+        textTwo={weatherType[weatherCondition].message}
         textTwoStyles={message}
         containerStyles={bodyWrapper}
       />
@@ -43,40 +53,42 @@ const CurrentWeather = () => {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    backgroundColor: "pink",
+    backgroundColor: "whitesmoke",
   },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  textBlack: {
-    color: "black",
-  },
-  temp: {
+  tempStyles: {
     fontSize: 48,
+    marginBottom: 4,
   },
   feelsLikeTemp: {
-    fontSize: 28,
+    fontSize: 24,
+    marginBottom: 12,
   },
   highLowWrapper: {
     flexDirection: "row",
     gap: 10,
   },
   highLow: {
-    fontSize: 20,
+    fontSize: 18,
   },
   bodyWrapper: {
     justifyContent: "flex-end",
     alignContent: "flex-start",
     paddingLeft: 25,
     marginBottom: 40,
+    borderLeftWidth: 3,
+    marginLeft: 10,
   },
   description: {
-    fontSize: 48,
+    fontSize: 32,
   },
   message: {
-    fontSize: 30,
+    fontSize: 16,
+    fontStyle: "italic",
   },
 });
 
